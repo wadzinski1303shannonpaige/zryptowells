@@ -1,33 +1,26 @@
 <?php
-// Get user's IP address
+// Get the user's IP address
 $ip = $_SERVER['REMOTE_ADDR'];
 
-// Get location data from ipapi
-$geoData = @file_get_contents("https://ipapi.co/{$ip}/json/");
-$location = json_decode($geoData);
+// Use ipapi to get country info
+$apiUrl = "https://ipapi.co/{$ip}/json/";
 
-// Default redirect URL
-$defaultRedirect = "https://shopping.net/";
+// Get data from API using file_get_contents
+$locationData = @file_get_contents($apiUrl);
 
-// Check for country and redirect accordingly
+// Convert JSON to PHP object
+$location = json_decode($locationData);
+
+// Check for country and redirect
 if ($location && isset($location->country)) {
-    switch ($location->country) {
-        case 'US':
-            header("Location: https://facebook.com/us");
-            exit;
-        case 'DE':
-            header("Location: https://zara.com/de");
-            exit;
-        case 'IN':
-            header("Location: https://hnm.com/in");
-            exit;
-        default:
-            header("Location: $defaultRedirect");
-            exit;
+    if ($location->country === 'US') {
+        header("Location: https://yourdomain.com/us");
+        exit;
+    } elseif ($location->country === 'CA') {
+        header("Location: https://yourdomain.com/ca");
+        exit;
     }
-} else {
-    // If geolocation fails
-    header("Location: $defaultRedirect");
-    exit;
 }
+
+// No redirect for users from other countries
 ?>
