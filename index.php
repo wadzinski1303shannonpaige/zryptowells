@@ -1,26 +1,18 @@
 <?php
-// Get the user's IP address
-$ip = $_SERVER['REMOTE_ADDR'];
+$ip = $_SERVER['REMOTE_ADDR']; // Get real IP
+$geo = json_decode(@file_get_contents("https://ipapi.co/{$ip}/json/"));
 
-// Use ipapi to get country info
-$apiUrl = "https://ipapi.co/{$ip}/json/";
-
-// Get data from API using file_get_contents
-$locationData = @file_get_contents($apiUrl);
-
-// Convert JSON to PHP object
-$location = json_decode($locationData);
-
-// Check for country and redirect
-if ($location && isset($location->country)) {
-    if ($location->country === 'US') {
-        header("Location: https://yourdomain.com/us");
-        exit;
-    } elseif ($location->country === 'CA') {
-        header("Location: https://yourdomain.com/ca");
-        exit;
+if ($geo && isset($geo->country)) {
+    switch ($geo->country) {
+        case 'US':
+            header("Location: https://google.com/us");
+            exit;
+        case 'IN':
+            header("Location: /in");
+            exit;
+        default:
+            header("Location: /global");
+            exit;
     }
 }
-
-// No redirect for users from other countries
 ?>
